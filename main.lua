@@ -3,6 +3,8 @@ function love.load()
 	stone = love.graphics.newImage("res/stone.png")
 	flag = love.graphics.newImage("res/flag.png")
 
+
+	--player variables
 	player = {
         grid_x = 256,
         grid_y = 256,
