@@ -14,6 +14,14 @@ function love.load()
 
 	currentLevel = "2"
 
+	--load up button images
+	button = {
+		play = love.graphics.newImage("res/button-play.png"),
+		how_to = love.graphics.newImage("res/button-how-to.png"),
+		about = love.graphics.newImage("res/button-about.png"),
+		back = love.graphics.newImage("res/button-back.png")
+	}
+
 	--player variables
 	player = {
         grid_x = 256,
@@ -121,9 +129,20 @@ function love.draw()
 	love.graphics.setBackgroundColor(20, 160, 250)
 	if state == "title" then
 		love.graphics.draw(title, 100, 10)
-		love.graphics.print('Press the right (>) arrow on your keyboard to start!', 150, 200, 0, 1.2)
-		love.graphics.print('Press A for about!', 150, 250, 0, 1.2)
-		love.graphics.print('Press H for How-To play!', 150, 300, 0, 1.2)
+		love.graphics.draw(button.play, 200, 200)
+		love.graphics.draw(button.how_to, 200, 300)
+		love.graphics.draw(button.about, 200, 400)
+		if love.mouse.isDown("l") then
+			if love.mouse.getX() > 200 and love.mouse.getX() < 500 and love.mouse.getY() > 200 and love.mouse.getY() < 270 then
+				state = "level1"
+			end
+			if love.mouse.getX() > 200 and love.mouse.getX() < 500 and love.mouse.getY() > 300 and love.mouse.getY() < 370 then
+				state = "how_to_play"
+			end
+			if love.mouse.getX() > 200 and love.mouse.getX() < 500 and love.mouse.getY() > 400 and love.mouse.getY() < 470 then
+				state = "about"
+			end
+		end  
 	elseif state == "level1" then
 		love.graphics.draw(player.stage1, player.act_x, player.act_y)
 		love.graphics.print('FPS: '..love.timer.getFPS(), 10, 10)
@@ -141,9 +160,11 @@ function love.draw()
 	elseif state == "about" then
 		love.graphics.print("This is a game for LD24!", 150, 200, 0, 1.2)
 		love.graphics.print("Made by ryebread761 with love 2D and lua ;)", 150, 250, 0, 1.2)
-		love.graphics.print("Press t to leave this screen", 150, 300, 0, 1.2)
-		if love.keyboard.isDown("t") then
-			state = "title"
+		love.graphics.draw(button.back, 150, 500)
+		if love.mouse.isDown("l") then
+			if love.mouse.getX() > 150 and love.mouse.getX() < 450 and love.mouse.getY() > 500 and love.mouse.getY() < 570 then
+				state = "title"
+			end
 		end
 	elseif state == "level2" then
 		love.graphics.draw(player.stage1, player.act_x, player.act_y)
@@ -246,9 +267,11 @@ function love.draw()
 	elseif state == "how_to_play" then
 			love.graphics.print("Arrows to move", 150, 200, 0, 1.2)
 			love.graphics.print("Go to the green flag for the next level", 150, 250, 0, 1.2)
-			love.graphics.print("Press t to leave this screen", 150, 300, 0, 1.2)
-			if love.keyboard.isDown("t") then
-				state = "title"
+			love.graphics.draw(button.back, 150, 500)
+			if love.mouse.isDown("l") then
+				if love.mouse.getX() > 150 and love.mouse.getX() < 450 and love.mouse.getY() > 500 and love.mouse.getY() < 570 then
+					state = "title"
+				end
 			end
 	end
 	love.graphics.print(state, 400, 10)
