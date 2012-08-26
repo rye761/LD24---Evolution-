@@ -4,6 +4,7 @@ function love.load()
 	stone = love.graphics.newImage("res/stone.png")
 	flag = love.graphics.newImage("res/flag.png")
 	title = love.graphics.newImage("res/title.png")
+	focused = false
 
 	--load up sounds
 	sound = {
@@ -127,6 +128,9 @@ end
 
 function love.draw()
 	love.graphics.setBackgroundColor(20, 160, 250)
+	if focused then
+		love.graphics.print('CLICK TO FOCUS!!!', 500, 200, 0, 1.1)
+	end
 	if state == "title" then
 		love.graphics.draw(title, 100, 10)
 		love.graphics.draw(button.play, 200, 200)
@@ -326,6 +330,38 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	    elseif key == "w" then
+	        if testMap(0, -1) then
+	            player.grid_y = player.grid_y - 32
+	        end
+	        if isEnd(0, 0) then
+	            state = "level"..currentLevel
+	            love.audio.play(sound.finish)
+	        end
+	    elseif key == "s" then
+	        if testMap(0, 1) then
+	            player.grid_y = player.grid_y + 32
+	        end
+	        if isEnd(0, 0) then
+	            state = "level"..currentLevel
+	            love.audio.play(sound.finish)
+	        end
+	    elseif key == "a" then
+	        if testMap(-1, 0) then
+	            player.grid_x = player.grid_x - 32
+	        end
+	        if isEnd(0, 0) then
+	        	love.audio.play(sound.finish)
+	            state = "level"..currentLevel
+	        end
+	    elseif key == "d" then
+	        if testMap(1, 0) then
+	            player.grid_x = player.grid_x + 32
+	        end
+	        if isEnd(0, 0) then
+	            state = "level"..currentLevel
+	            love.audio.play(sound.finish)
+	        end
     	end
 	end
 	if key == "escape" then
@@ -345,4 +381,12 @@ function isEnd(x, y)
         return true
     end
     return false
+end
+
+function love.focus(f)
+	if not f then 
+		focused = true
+	else 
+		focused = false
+	end
 end
