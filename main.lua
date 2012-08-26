@@ -4,13 +4,14 @@ function love.load()
 	stone = love.graphics.newImage("res/stone.png")
 	flag = love.graphics.newImage("res/flag.png")
 	title = love.graphics.newImage("res/title.png")
+	coin = love.graphics.newImage("res/coin.png")
 	focused = false
 
 	--load up sounds
 	sound = {
 		finish = love.audio.newSource("res/finish.wav", "static"),
 		evolve = love.audio.newSource("res/evolve.wav", "static"),
-		won = love.audio.newSource("res/won.wav")
+		won = love.audio.newSource("res/won.wav"),
 	}
 
 	currentLevel = "2"
@@ -32,77 +33,78 @@ function love.load()
         speed = 2,
         stage1 = love.graphics.newImage("res/player-stage1.png"),
         stage2 = love.graphics.newImage("res/player-stage2.png"),
-        stage3 = love.graphics.newImage("res/player-stage3.png")
+        stage3 = love.graphics.newImage("res/player-stage3.png"),
+        score = 0
     }
     map1 = {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 2, 1 },
-        { 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
-        { 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1 },
-        { 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 0, 3, 1, 3, 3, 3, 3, 3, 1, 1, 2, 1 },
+        { 1, 0, 1, 1, 3, 3, 3, 0, 1, 0, 0, 1, 0, 1 },
+        { 1, 1, 1, 1, 3, 3, 3, 0, 1, 0, 0, 1, 0, 1 },
+        { 1, 1, 3, 1, 3, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
+        { 1, 0, 3, 1, 3, 0, 3, 0, 1, 1, 1, 1, 1, 1 },
+        { 1, 0, 3, 1, 1, 1, 3, 0, 1, 3, 3, 3, 3, 1 },
+        { 1, 0, 3, 1, 3, 3, 3, 0, 1, 3, 3, 3, 3, 1 },
+        { 1, 0, 3, 1, 3, 3, 3, 0, 1, 3, 3, 3, 3, 1 },
+        { 1, 0, 3, 1, 3, 3, 3, 0, 1, 1, 1, 1, 3, 1 },
+        { 1, 0, 3, 1, 3, 3, 3, 0, 1, 0, 0, 0, 3, 1 },
+        { 1, 0, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 3, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
     }
     map2 = {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1 },
-        { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1 },
+        { 1, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+        { 1, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
+        { 1, 3, 1, 1, 0, 1, 3, 3, 1, 1, 1, 1, 1, 1 },
+        { 1, 3, 1, 1, 1, 1, 3, 3, 1, 3, 3, 0, 0, 1 },
+        { 1, 3, 1, 1, 3, 3, 3, 3, 1, 3, 3, 0, 0, 1 },
+        { 1, 3, 3, 1, 3, 3, 3, 3, 1, 3, 3, 0, 0, 1 },
+        { 1, 1, 3, 1, 3, 3, 3, 3, 1, 1, 1, 1, 0, 1 },
+        { 1, 0, 3, 1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 1 },
+        { 1, 2, 3, 3, 3, 3, 0, 3, 3, 0, 0, 0, 0, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
     }
     map3 = {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 2, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1 },
-        { 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
+        { 1, 2, 0, 0, 1, 0, 0, 0, 1, 3, 1, 0, 3, 1 },
+        { 1, 3, 0, 0, 1, 0, 0, 0, 1, 3, 3, 3, 3, 1 },
+        { 1, 3, 1, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 1 },
+        { 1, 3, 0, 1, 0, 1, 0, 1, 1, 3, 3, 3, 3, 1 },
+        { 1, 3, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1 },
+        { 1, 3, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 },
+        { 1, 3, 0, 1, 1, 1, 1, 1, 1, 3, 0, 0, 0, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 3, 1, 0, 0, 0, 0, 1, 3, 0, 0, 0, 1 },
+        { 1, 0, 3, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
     }
     map4 = {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
         { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1 },
-        { 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1 },
-        { 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
+        { 1, 3, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+        { 1, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1 },
+        { 1, 3, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1 },
+        { 1, 3, 1, 1, 1, 1, 0, 0, 0, 0, 3, 3, 1, 1 },
+        { 1, 3, 1, 1, 0, 0, 1, 0, 1, 0, 3, 3, 1, 1 },
+        { 1, 3, 0, 1, 1, 1, 1, 1, 1, 0, 0, 3, 0, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-        { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1 },
+        { 1, 3, 0, 1, 0, 0, 0, 0, 1, 3, 3, 0, 0, 1 },
+        { 1, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 2, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
     }
     map5 = {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 0, 1, 2, 0, 0, 1, 0, 1, 0, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1 },
-        { 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 },
+        { 1, 0, 1, 3, 1, 2, 3, 0, 1, 3, 1, 3, 3, 1 },
+        { 1, 0, 1, 3, 1, 3, 3, 0, 1, 3, 3, 3, 3, 1 },
+        { 1, 0, 1, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 0, 0, 3, 3, 1, 3, 1, 1, 0, 0, 0, 0, 1 },
+        { 1, 0, 1, 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1 },
+        { 1, 0, 1, 1, 1, 1, 0, 3, 0, 0, 0, 0, 1, 1 },
+        { 1, 1, 1, 0, 0, 0, 0, 3, 1, 0, 0, 0, 1, 1 },
         { 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1 },
         { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
         { 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1 },
@@ -111,17 +113,17 @@ function love.load()
     }
     map6 = {
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-        { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 0, 2, 1, 1, 0, 1, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1 },
-        { 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1 },
-        { 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1 },
-        { 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-        { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 1, 3, 3, 3, 0, 0, 0, 3, 3, 3, 3, 3, 3, 1 },
+        { 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1 },
+        { 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 3, 1 },
+        { 1, 3, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 3, 1 },
+        { 1, 3, 1, 0, 1, 0, 0, 2, 1, 1, 0, 1, 3, 1 },
+        { 1, 3, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 3, 1 },
+        { 1, 3, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 3, 1 },
+        { 1, 3, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 3, 1 },
+        { 1, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1 },
+        { 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1 },
+        { 1, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 1 },
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
     }
 end
@@ -159,6 +161,9 @@ function love.draw()
 	            if map1[y][x] == 2 then
 	                love.graphics.draw(flag, x * 32, y * 32)
 	            end
+	            if map1[y][x] == 3 then
+	                love.graphics.draw(coin, x * 32, y * 32)
+	            end
 	        end
 	    end
 	elseif state == "about" then
@@ -183,6 +188,9 @@ function love.draw()
 	            if map2[y][x] == 2 then
 	                love.graphics.draw(flag, x * 32, y * 32)
 	            end
+	            if map2[y][x] == 3 then
+	                love.graphics.draw(coin, x * 32, y * 32)
+	            end
 	        end
 	    end
 	elseif state == "level3" then
@@ -197,6 +205,9 @@ function love.draw()
 	            end
 	            if map3[y][x] == 2 then
 	                love.graphics.draw(flag, x * 32, y * 32)
+	            end
+	            if map3[y][x] == 3 then
+	                love.graphics.draw(coin, x * 32, y * 32)
 	            end
 	        end
 	    end
@@ -222,6 +233,9 @@ function love.draw()
 	            if map4[y][x] == 2 then
 	                love.graphics.draw(flag, x * 32, y * 32)
 	            end
+	            if map4[y][x] == 3 then
+	                love.graphics.draw(coin, x * 32, y * 32)
+	            end
 	        end
 	    end
 	elseif state == "level_evolve2" then
@@ -246,6 +260,9 @@ function love.draw()
 	            if map5[y][x] == 2 then
 	                love.graphics.draw(flag, x * 32, y * 32)
 	            end
+	            if map5[y][x] == 3 then
+	                love.graphics.draw(coin, x * 32, y * 32)
+	            end
 	        end
 	    end
 	elseif state == "level6" then
@@ -261,12 +278,16 @@ function love.draw()
 	            if map6[y][x] == 2 then
 	                love.graphics.draw(flag, x * 32, y * 32)
 	            end
+	            if map6[y][x] == 3 then
+	                love.graphics.draw(coin, x * 32, y * 32)
+	            end
 	        end
 	    end
 	elseif state == "level_end" then
 		love.graphics.print("That was my LD24 game!", 150, 200, 0, 1.2)
 		love.graphics.print("Made by ryebread761 with love 2D and lua ;)", 150, 250, 0, 1.2)
 		love.graphics.print("Thanks for Playing! Hope you enjoyed!", 150, 300, 0, 1.2)
+		love.graphics.print("You finished with a score of: "..player.score, 150, 350, 0, 1.2)
 		love.audio.play(sound.won)
 	elseif state == "how_to_play" then
 			love.graphics.print("Arrows to move", 150, 200, 0, 1.2)
@@ -278,7 +299,7 @@ function love.draw()
 				end
 			end
 	end
-	love.graphics.print(state, 400, 10)
+	love.graphics.print("Score: "..player.score, 600, 10)
 end
 
 function love.update(dt)
@@ -306,6 +327,7 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	        isCoin(0, 0)
 	    elseif key == "down" then
 	        if testMap(0, 1) then
 	            player.grid_y = player.grid_y + 32
@@ -314,6 +336,7 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	        isCoin(0, 0)
 	    elseif key == "left" then
 	        if testMap(-1, 0) then
 	            player.grid_x = player.grid_x - 32
@@ -322,6 +345,7 @@ function love.keypressed(key)
 	        	love.audio.play(sound.finish)
 	            state = "level"..currentLevel
 	        end
+	        isCoin(0, 0)
 	    elseif key == "right" then
 	        if testMap(1, 0) then
 	            player.grid_x = player.grid_x + 32
@@ -330,6 +354,7 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	        isCoin(0, 0)
 	    elseif key == "w" then
 	        if testMap(0, -1) then
 	            player.grid_y = player.grid_y - 32
@@ -338,6 +363,7 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	        isCoin(0, -1)
 	    elseif key == "s" then
 	        if testMap(0, 1) then
 	            player.grid_y = player.grid_y + 32
@@ -346,6 +372,7 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	        isCoin(0, 1)
 	    elseif key == "a" then
 	        if testMap(-1, 0) then
 	            player.grid_x = player.grid_x - 32
@@ -354,6 +381,7 @@ function love.keypressed(key)
 	        	love.audio.play(sound.finish)
 	            state = "level"..currentLevel
 	        end
+	        isCoin(-1, 0)
 	    elseif key == "d" then
 	        if testMap(1, 0) then
 	            player.grid_x = player.grid_x + 32
@@ -362,6 +390,7 @@ function love.keypressed(key)
 	            state = "level"..currentLevel
 	            love.audio.play(sound.finish)
 	        end
+	        isCoin(1, 0)
     	end
 	end
 	if key == "escape" then
@@ -381,6 +410,13 @@ function isEnd(x, y)
         return true
     end
     return false
+end
+
+function isCoin(x, y)
+	if currentMap[(player.grid_y / 32) + y][(player.grid_x / 32) + x] == 3 then
+		player.score = player.score + 1;
+        currentMap[(player.grid_y / 32) + y][(player.grid_x / 32) + x] = 0
+    end
 end
 
 function love.focus(f)
